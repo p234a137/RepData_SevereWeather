@@ -1,6 +1,6 @@
 ---
 title: "Health and Economic Impact of Storm and Severe Weather Events"
-author: "Dorian Kcira"
+author: ""
 date: "10/19/2015"
 output: html_document
 ---
@@ -10,7 +10,7 @@ This analysis is based on a dataset from the U.S. National Oceanic and Atmospher
 
 # Data Processing
 
-Below we download and unzip the storm data from the NOAA (unless those data have been downloaded and unzipped already).
+We download and unzip the storm data from the NOAA (unless those data have been downloaded and unzipped already).
 
 ```{r download}
 if (! file.exists("data/StormData.csv")){
@@ -20,7 +20,7 @@ if (! file.exists("data/StormData.csv")){
 }
 ```
 
-Now let's read the data and look at the number of variables and measurements (columns and rows). Let's also print out all column names.
+Then we read the data in using read.csv and look at the number of variables and measurements (columns and rows).  All column names are then printed.
 
 ```{R read_data, cache=TRUE}
 #knitr::opts_chunk$set(cache=TRUE)
@@ -72,6 +72,8 @@ As we can see from the plots, Tornadoes are the ones with the highest fatalities
 
 In order to determine the answer to this question we at property damage (PROPDMG) and crop damage (CROPDMG) but these variables must be combined with the multiplying factors using the respective exponentials in PROPDMGEXP and CROPDMGEXP, respectively. 
 
+We print out the tables for the exponentials and then we write a function that converts the exponentials to multipliers. Then we use sapply to calculate the value of the damages for property and crops.
+
 ```{r economicImpact}
 # print out the values of the exponential and their frequencies
 table(stormdata$PROPDMGEXP)
@@ -104,7 +106,7 @@ stormdata$cropImpact <- stormdata$CROPDMG * cropMultipliers
 stormdata$econImpact <- stormdata$propImpact + stormdata$cropImpact
 ```
 
-Now that we have the impact data in the proper units, let's find out the mean damage per event type for property and crop damage.
+Now that we have the impact data in the proper units, let's find out the mean damage per event type for property and crop damage. As in the health impact case, let's plot the first 20 events with highest impact for each case.
 
 ```{r property_crop}
 meanProp <- tapply(stormdata$propImpact, stormdata$EVTYPE, mean, na.rm = TRUE, simplify=TRUE)
@@ -126,22 +128,10 @@ largestEcon = tail(sort(meanEcon), nr)
 barchart(largestEcon,   main="Highest economic impact"  , xlab="total economic damage (property + crops)")
 ```
 
-Since property damage is in general much higher than crop damage, the total economic damage is similar to the property damage with small changes. For example, excessive wetness, which is the highest-impact event for crops, becomes more important than hurricanes in the total economic impact.
+Since property damage is in general much higher than crop damage, the total economic damage is similar to the property damage with small changes. For example, excessive wetness, which is the highest-impact event for crops, becomes more important than hurricane opal in the total economic impact.
 
 # Summary and Conclusions
 
-We used data from the NOAA severe weather database in order to determine the weather events with the highest health and economic impact. From our study, tornadoes and heat waves are the events with the highest fatalities and injuries. When it comes to economic impact, tornadoes are the ones with the highest property damage, while severe wetness has the largest impact on crops. In average, the highest total economic impact comes from tornadoes.
+We used data from the NOAA severe weather database in order to determine the weather events with the highest health and economic impact. From our study, tornadoes and heat waves are the events with the highest fatalities and injuries, respectively. When it comes to economic impact, tornadoes are the ones with the highest property damage, while severe wetness has the largest impact on crops. In average, the highest total economic impact comes from tornadoes.
 
 
-***********************************************
-
-
-## Publishing Your Analysis
-
-For this assignment you will need to publish your analysis on RPubs.com. If you do not already have an account, then you will have to create a new account. After you have completed writing your analysis in RStudio, you can publish it to RPubs by doing the following:
-
-In RStudio, make sure your R Markdown document (.Rmd) document is loaded in the editor
-
-   1. Click the Knit HTML button in the doc toolbar to preview your document.
-   1. In the preview window, click the Publish button.
-   1. Once your document is published to RPubs, you should get a unique URL to that document. Make a note of this URL as you will need it to submit your assignment.
